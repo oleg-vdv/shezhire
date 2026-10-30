@@ -15,11 +15,13 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BUILD = ROOT / "kaggle" / "build"
 MODELS = ["gemma4:e2b-it-qat", "gemma4:12b"]
+EVAL = True
 
 RUN = r'''
 import base64, io, os, subprocess, sys, time, zipfile, urllib.request
 BLOB = "{blob}"
 MODELS = {models}
+EVAL = {eval}
 W = "/kaggle/working/shezhire"
 zipfile.ZipFile(io.BytesIO(base64.b64decode(BLOB))).extractall(W)
 os.chdir(W)
@@ -42,23 +44,36 @@ for m in MODELS:
     if sh(f"ollama pull {{m}}").returncode != 0:
         print("pull failed", m); continue
     t0 = time.time()
-    sh(f"SHEZHIRE_OLLAMA=http://127.0.0.1:11434 python -X utf8 eval/run_eval.py --model {{m}}")
+    if EVAL:
+        sh(f"SHEZHIRE_OLLAMA=http://127.0.0.1:11434 python -X utf8 eval/run_eval.py --model {{m}}")
+    tag = m.replace(":", "_")
+    os.makedirs("demo", exist_ok=True)
+    for st in sorted(os.listdir("data/stories")):
+        name = st[:-5]
+        sh(f"SHEZHIRE_OLLAMA=http://127.0.0.1:11434 python -X utf8 -m shezhire.cli run data/stories/{{st}} --model {{m}} "
+           f"--save-extraction demo/{{name}}-{{tag}}.ext.json -o demo/{{name}}-{{tag}}.html")
     print(m, "took", round(time.time() - t0), "s", flush=True)
-sh("tar czf /kaggle/working/out.tgz eval/runs eval/results-*.json")
+sh("tar czf /kaggle/working/out.tgz eval/runs eval/results-*.json demo")
 srv.terminate()
 '''
 
 
 def main():
+    import sys
+    global EVAL, MODELS
+    if "--stories-only" in sys.argv:
+        EVAL = False
+    if "--model" in sys.argv:
+        MODELS = [sys.argv[sys.argv.index("--model") + 1]]
     buf = io.BytesIO()
     with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as z:
-        for sub in ["shezhire", "eval", "data/synthetic"]:
+        for sub in ["shezhire", "eval", "data/synthetic", "data/stories"]:
             for p in (ROOT / sub).rglob("*"):
                 if p.is_file() and "__pycache__" not in p.parts and "runs" not in p.parts:
                     z.write(p, p.relative_to(ROOT).as_posix())
     blob = base64.b64encode(buf.getvalue()).decode()
     BUILD.mkdir(parents=True, exist_ok=True)
-    (BUILD / "run.py").write_text(RUN.format(blob=blob, models=json.dumps(MODELS)), encoding="utf-8")
+    (BUILD / "run.py").write_text(RUN.format(blob=blob, models=json.dumps(MODELS), eval=EVAL), encoding="utf-8")
     (BUILD / "kernel-metadata.json").write_text(json.dumps({
         "id": "ipgleg/shezhire-eval",
         "title": "shezhire-eval",
