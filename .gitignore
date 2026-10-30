@@ -1,0 +1,7 @@
+__pycache__/
+.pytest_cache/
+kaggle/build/
+demo/smoke.html
+*.m4a
+*.wav
+*.mp3
