@@ -1,0 +1,10 @@
+{
+ "relations": [],
+ "facts": [],
+ "parse_error": "",
+ "_meta": {
+  "model": "gemma4:e2b-it-qat",
+  "seconds": 87.9,
+  "eval_count": 7554
+ }
+}

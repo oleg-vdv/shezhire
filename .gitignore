@@ -6,3 +6,4 @@ demo/smoke.html
 *.wav
 *.mp3
 docs/post.md
+kaggle/out/

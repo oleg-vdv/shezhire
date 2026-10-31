@@ -137,15 +137,16 @@ def main():
     ap.add_argument("--n", type=int, default=30)
     ap.add_argument("--seed", type=int, default=7)
     ap.add_argument("--out", default="data/synthetic")
+    ap.add_argument("--prefix", default="syn")
     a = ap.parse_args()
     rng = random.Random(a.seed)
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     for i in range(a.n):
         f, r = build_family(rng)
-        doc = {"id": f"syn-{i:02d}", "narrator": r["narrator"], "segments": tell(f, r, rng),
+        doc = {"id": f"{a.prefix}-{i:02d}", "narrator": r["narrator"], "segments": tell(f, r, rng),
                "truth": truth(f), "decoys": FRIENDS_M}
-        (out / f"syn-{i:02d}.json").write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
+        (out / f"{a.prefix}-{i:02d}.json").write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"wrote {a.n} stories to {out}")
 
 

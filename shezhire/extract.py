@@ -13,6 +13,7 @@ import httpx
 
 OLLAMA = os.environ.get("SHEZHIRE_OLLAMA", "http://localhost:11434")
 MODEL = os.environ.get("SHEZHIRE_MODEL", "gemma4:12b")
+THINK = os.environ.get("SHEZHIRE_THINK", "0") == "1"
 
 RELATIONS = ["father", "mother", "son", "daughter", "husband", "wife",
              "brother", "sister", "grandfather", "grandmother"]
@@ -32,6 +33,11 @@ Each fact: {{"person": "<name>", "kind": "born" | "died" | "place" | "occupation
 
 Rules:
 - The narrator is {{narrator}}. When the speaker says "я", "мой", "мен", "менің", use the narrator's name.
+- Always give the narrator's own links: "Ерболат – мой отец" -> {{"a": "Ерболат", "rel": "father", "b": "{{narrator}}"}}.
+  Kazakh "әкем", "анам", "атам", "әжем" mean my father, my mother, my grandfather, my grandmother.
+- "прадед"/"прабабушка" is a great-grandparent, two generations above a grandparent. Do not call
+  them grandfather or grandmother of the narrator; give their parent links to their own children instead.
+- Names are names. Never use "дед", "отец", "мама" as a person's name.
 - Use names exactly as spoken, in the nominative form.
 - quote must be copied word for word from the segment, not paraphrased.
 - Only people who have a name. Skip unnamed people ("какой-то сосед").
@@ -58,6 +64,9 @@ def extract(transcript: dict, model: str = MODEL, timeout: float = 600) -> dict:
                          {"role": "user", "content": user}],
             "format": "json",
             "stream": False,
+            # Gemma 4 thinks by default, which costs minutes per story on a
+            # small GPU. Off unless SHEZHIRE_THINK=1.
+            "think": THINK,
             "options": {"temperature": 0, "num_ctx": 8192},
         },
         timeout=timeout,

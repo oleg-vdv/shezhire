@@ -9,9 +9,12 @@ the tree as a dashed line with the reason, never as a fact.
 import re
 
 from .lexicon import EDGE, FIRST_PERSON, GROUP_OF, STEMS
-from .text import has_stem, mentions_name, norm, quote_score
+from .text import has_stem, mentions_name, name_stem, norm, quote_score
 
-QUOTE_MIN = 85.0  # partial-ratio threshold for "this quote is in the segment"
+QUOTE_MIN = 85.0
+ROLE_WORDS = ["дед", "бабушк", "отец", "мать", "мама", "папа", "ата", "әже", "әке", "ана"]
+ROLE_NAMES = {"дед", "дедушка", "бабушка", "отец", "мать", "мама", "папа", "ата", "атам", "әже", "әжем",
+              "әке", "әкем", "ана", "анам", "прадед", "прабабушка"}  # partial-ratio threshold for "this quote is in the segment"
 
 REASONS = {
     "bad_relation": "relation type the tree does not know",
@@ -21,6 +24,9 @@ REASONS = {
     "name_not_in_quote": "the quote does not mention both people",
     "no_kinship_word": "the quote has no kinship word for this relation",
     "value_not_in_quote": "the value is not in the quote",
+    "kin_word_is_narrators": "the kinship word is about the narrator, not these two",
+    "both_listed_as_children": "both are listed as children in the same breath",
+    "role_not_name": "a role word used as if it were a name",
 }
 
 
@@ -28,8 +34,19 @@ def _seg_by_id(transcript):
     return {s["id"]: s for s in transcript["segments"]}
 
 
+def _seg_id(v):
+    """Small models write the segment as 3, "3", [3, 4] or "seg 3"."""
+    if isinstance(v, list):
+        v = v[0] if v else None
+    if isinstance(v, str):
+        m = re.search(r"\d+", v)
+        v = int(m.group()) if m else None
+    return v if isinstance(v, int) else None
+
+
 def _find_quote(quote, transcript, seg_id):
     """Return (segment, score). Prefer the segment the model named."""
+    seg_id = _seg_id(seg_id)
     segs = _seg_by_id(transcript)
     best, best_score = None, 0.0
     if seg_id in segs:
@@ -85,6 +102,10 @@ def verify_relation(rel, transcript, aliases=None):
     if norm(a) == norm(b):
         out["reason"] = "self_relation"
         return out
+    for name in (a, b):
+        if has_stem(name, ROLE_WORDS) and len(norm(name).split()) == 1 and norm(name) in ROLE_NAMES:
+            out["reason"] = "role_not_name"
+            return out
 
     whole = _whole_text(transcript)
     for name in (a, b):
@@ -132,10 +153,59 @@ def verify_relation(rel, transcript, aliases=None):
         out["evidence"] = _evidence(seg)
         return out
 
+    # "Мою маму зовут Ақмарал, она вышла замуж за Берік": "маму" is the
+    # narrator's mother, so it cannot support "Ақмарал is Берік's mother".
+    hits = _kin_hits(text, STEMS[GROUP_OF[r]])
+    if hits and all(h["mine"] for h in hits) and not any(_is_narrator(n, narrator) for n in (a, b)):
+        out["reason"] = "kin_word_is_narrators"
+        out["evidence"] = _evidence(seg)
+        return out
+
+    # "двое детей: Данияр и Ерлан" lists two children; they are not
+    # parent and child of each other.
+    if GROUP_OF[r] == "parent" and _both_listed_as_children(text, a, b):
+        out["reason"] = "both_listed_as_children"
+        out["evidence"] = _evidence(seg)
+        return out
+
     out["status"] = "verified"
     out["kin_word"] = word
     out["evidence"] = _evidence(span)
     return out
+
+
+MY = {"мой", "моя", "мою", "моего", "моей", "мои", "моих", "моему", "менің", "my"}
+CHILD_WORDS = ["дет", "ребен", "ребён", "сын", "сыновь", "доч", "бала", "ұл", "қыз", "children", "son", "daughter"]
+
+
+def _kin_hits(text, stems):
+    """Every kinship word in text, and whether it is the narrator's own
+    ("мой отец", "мою маму", Kazakh "әкем", "анам", "атам", "әжем")."""
+    toks = norm(text).split()
+    out = []
+    for i, t in enumerate(toks):
+        for s in stems:
+            s = norm(s)
+            if " " in s or not t.startswith(s):
+                continue
+            mine = (i > 0 and toks[i - 1] in MY) or (len(t) == len(s) + 1 and t.endswith("м"))                 or (len(t) == len(s) + 2 and t[-2:] in ("ым", "ім"))
+            out.append({"word": t, "mine": mine})
+            break
+    return out
+
+
+def _both_listed_as_children(text, a, b):
+    toks = norm(text).split()
+    first = next((i for i, t in enumerate(toks) if any(t.startswith(w) for w in CHILD_WORDS)), None)
+    if first is None:
+        return False
+
+    def pos(name):
+        st = name_stem(name)
+        return next((i for i, t in enumerate(toks) if st and t.startswith(st)), None)
+
+    pa, pb = pos(a), pos(b)
+    return pa is not None and pb is not None and pa > first and pb > first
 
 
 def _prev_segment(transcript, seg):

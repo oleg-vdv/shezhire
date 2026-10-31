@@ -79,6 +79,7 @@ def main():
     ap.add_argument("--data", default=str(ROOT / "data" / "synthetic"))
     ap.add_argument("--only-score", action="store_true")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--workers", type=int, default=1, help="stories sent to the model at once")
     a = ap.parse_args()
 
     cache = ROOT / "eval" / "runs" / a.model.replace(":", "_")
@@ -86,6 +87,24 @@ def main():
     files = sorted(Path(a.data).glob("*.json"))
     if a.limit:
         files = files[: a.limit]
+
+    if not a.only_score and a.workers > 1:
+        from concurrent.futures import ThreadPoolExecutor
+
+        def warm(fp):
+            cp = cache / fp.name
+            if cp.exists():
+                return
+            doc = json.loads(fp.read_text(encoding="utf-8"))
+            try:
+                ext = extract(doc, model=a.model)
+            except Exception as e:  # keep going, the story is scored as empty
+                ext = {"relations": [], "facts": [], "error": str(e)[:300]}
+            cp.write_text(json.dumps(ext, ensure_ascii=False, indent=1), encoding="utf-8")
+            print("done", fp.name, ext.get("_meta", {}).get("seconds"), flush=True)
+
+        with ThreadPoolExecutor(a.workers) as ex:
+            list(ex.map(warm, files))
 
     tot = Counter()
     reasons_on_false = Counter()
@@ -154,7 +173,8 @@ def main():
         "median_seconds": sorted(seconds)[len(seconds) // 2] if seconds else None,
         "per_story": stories,
     }
-    out = ROOT / "eval" / f"results-{a.model.replace(':', '_')}.json"
+    tag = Path(a.data).name
+    out = ROOT / "eval" / f"results-{a.model.replace(':', '_')}{'' if tag == 'synthetic' else '-' + tag}.json"
     out.write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding="utf-8")
     print(json.dumps({k: v for k, v in res.items() if k != "per_story"}, ensure_ascii=False, indent=1))
 
