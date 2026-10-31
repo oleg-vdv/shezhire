@@ -1,0 +1,133 @@
+{
+ "relations": [
+  {
+   "a": "Қайрат",
+   "rel": "grandfather",
+   "b": "Данияр",
+   "seg": [
+    1,
+    2
+   ]
+  },
+  {
+   "a": "Нұрила",
+   "rel": "grandmother",
+   "b": "Данияр",
+   "seg": [
+    2,
+    3
+   ]
+  },
+  {
+   "a": "Бауыржан",
+   "rel": "grandfather",
+   "b": "Данияр",
+   "seg": [
+    4
+   ]
+  },
+  {
+   "a": "Ақмарал",
+   "rel": "grandmother",
+   "b": "Данияр",
+   "seg": [
+    7
+   ]
+  },
+  {
+   "a": "Құдайберген",
+   "rel": "father",
+   "b": "Данияр",
+   "seg": [
+    9
+   ]
+  },
+  {
+   "a": "Меруерт",
+   "rel": "mother",
+   "b": "Данияр",
+   "seg": [
+    11
+   ]
+  },
+  {
+   "a": "Перизат",
+   "rel": "sister",
+   "b": "Данияр",
+   "seg": [
+    12
+   ]
+  }
+ ],
+ "facts": [
+  {
+   "person": "Қайрат",
+   "kind": "born",
+   "value": "1899",
+   "seg": [
+    1
+   ]
+  },
+  {
+   "person": "Нұрила",
+   "kind": "born",
+   "value": "N/A",
+   "seg": [
+    2
+   ]
+  },
+  {
+   "person": "Бауыржан",
+   "kind": "born",
+   "value": "N/A",
+   "seg": [
+    3
+   ]
+  },
+  {
+   "person": "Роза",
+   "kind": "born",
+   "value": "N/A",
+   "seg": [
+    3
+   ]
+  },
+  {
+   "person": "Бауыржан",
+   "kind": "occupation",
+   "value": "тракторист",
+   "seg": [
+    4
+   ]
+  },
+  {
+   "person": "Құдайберген",
+   "kind": "born",
+   "value": "1951",
+   "seg": [
+    10
+   ]
+  },
+  {
+   "person": "Меруерт",
+   "kind": "born",
+   "value": "N/A",
+   "seg": [
+    11
+   ]
+  },
+  {
+   "person": "Перизат",
+   "kind": "born",
+   "value": "N/A",
+   "seg": [
+    12
+   ]
+  }
+ ],
+ "_meta": {
+  "model": "gemma4:e2b-it-qat",
+  "seconds": 10.3,
+  "eval_count": 451
+ }
+}

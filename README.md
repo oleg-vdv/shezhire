@@ -38,14 +38,29 @@ A transcript is plain JSON:
 
 ## How well it works
 
-`eval/` has 30 synthetic family stories with a known true tree and the traps real recordings have: a named neighbour who is "like family", a child whose name nobody remembers, "he married in 1942" with the husband in the previous sentence, Kazakh kinship words inside Russian speech.
+`eval/` has 60 synthetic family stories with a known true tree and the traps real recordings have: a named neighbour who is "like family", a child whose name nobody remembers, "he married in 1942" with the husband in the previous sentence, Kazakh kinship words inside Russian speech. The check was tuned on `data/synthetic` (30 stories); `data/holdout` (30 more, different seed) was generated after the rules were fixed.
+
+Gemma 4 12B, default prompt, `think: false`, Kaggle T4:
+
+| | tuned on (30) | held out (30) |
+|---|---|---|
+| Links the model proposed | 407 | 407 |
+| Correct before the check | 85.5% | 85.5% |
+| Wrong links caught as ghosts | 59 of 59 | 59 of 59 |
+| Correct after the check | 100% (303/303) | 100% (290/290) |
+| True links thrown away | 46 of 350 | 59 of 351 |
+| Median time per story | 45 s | 44 s |
+
+All runs, including Gemma 4 E2B and the shorter first prompt, are in [eval/RESULTS.md](eval/RESULTS.md).
 
 ```bash
 python eval/make_synthetic.py --n 30 --seed 7
-python eval/run_eval.py --model gemma4:12b
+python eval/make_synthetic.py --n 30 --seed 2026 --out data/holdout --prefix hold
+python eval/run_eval.py --model gemma4:12b --workers 4
+python eval/run_eval.py --model gemma4:12b --data data/holdout --only-score   # rescore cached outputs
 ```
 
-Results are in `eval/results-*.json`; raw model outputs are cached in `eval/runs/` so the scoring can be rerun without a model.
+Raw model outputs are cached in `eval/runs/<model>/`, so every number can be recomputed without a GPU.
 
 ## What the check does not catch
 

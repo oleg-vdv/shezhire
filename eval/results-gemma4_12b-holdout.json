@@ -1,0 +1,311 @@
+{
+ "model": "gemma4:12b",
+ "stories": 30,
+ "edges_in_truth": 650,
+ "raw": {
+  "edges": 407,
+  "correct": 348,
+  "precision": 85.5,
+  "recall": 53.5
+ },
+ "verified": {
+  "edges": 290,
+  "correct": 290,
+  "precision": 100.0,
+  "recall": 44.6
+ },
+ "claims": {
+  "true_claims": 351,
+  "false_claims": 59,
+  "false_caught": 59,
+  "true_rejected": 59,
+  "truth": 650,
+  "raw": 407,
+  "raw_tp": 348,
+  "kept": 290,
+  "kept_tp": 290
+ },
+ "false_claims_caught_pct": 100.0,
+ "true_claims_rejected_pct": 16.8,
+ "reasons_false_caught": {
+  "no_kinship_word": 42,
+  "name_not_in_quote": 17
+ },
+ "reasons_true_rejected": {
+  "name_not_in_quote": 57,
+  "no_kinship_word": 2
+ },
+ "median_seconds": 44.2,
+ "per_story": [
+  {
+   "id": "hold-00",
+   "truth": 21,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 8,
+   "kept_tp": 8,
+   "seconds": 39.4
+  },
+  {
+   "id": "hold-01",
+   "truth": 26,
+   "raw": 14,
+   "raw_tp": 12,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 47.7
+  },
+  {
+   "id": "hold-02",
+   "truth": 21,
+   "raw": 17,
+   "raw_tp": 15,
+   "kept": 13,
+   "kept_tp": 13,
+   "seconds": 57.0
+  },
+  {
+   "id": "hold-03",
+   "truth": 21,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 9,
+   "kept_tp": 9,
+   "seconds": 43.7
+  },
+  {
+   "id": "hold-04",
+   "truth": 21,
+   "raw": 15,
+   "raw_tp": 13,
+   "kept": 9,
+   "kept_tp": 9,
+   "seconds": 52.4
+  },
+  {
+   "id": "hold-05",
+   "truth": 26,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 41.4
+  },
+  {
+   "id": "hold-06",
+   "truth": 21,
+   "raw": 12,
+   "raw_tp": 11,
+   "kept": 9,
+   "kept_tp": 9,
+   "seconds": 34.3
+  },
+  {
+   "id": "hold-07",
+   "truth": 26,
+   "raw": 15,
+   "raw_tp": 13,
+   "kept": 13,
+   "kept_tp": 13,
+   "seconds": 47.1
+  },
+  {
+   "id": "hold-08",
+   "truth": 21,
+   "raw": 13,
+   "raw_tp": 11,
+   "kept": 8,
+   "kept_tp": 8,
+   "seconds": 43.5
+  },
+  {
+   "id": "hold-09",
+   "truth": 26,
+   "raw": 16,
+   "raw_tp": 12,
+   "kept": 12,
+   "kept_tp": 12,
+   "seconds": 50.3
+  },
+  {
+   "id": "hold-10",
+   "truth": 16,
+   "raw": 13,
+   "raw_tp": 11,
+   "kept": 8,
+   "kept_tp": 8,
+   "seconds": 40.8
+  },
+  {
+   "id": "hold-11",
+   "truth": 21,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 9,
+   "kept_tp": 9,
+   "seconds": 40.6
+  },
+  {
+   "id": "hold-12",
+   "truth": 21,
+   "raw": 14,
+   "raw_tp": 12,
+   "kept": 9,
+   "kept_tp": 9,
+   "seconds": 41.9
+  },
+  {
+   "id": "hold-13",
+   "truth": 16,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 7,
+   "kept_tp": 7,
+   "seconds": 40.8
+  },
+  {
+   "id": "hold-14",
+   "truth": 26,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 40.0
+  },
+  {
+   "id": "hold-15",
+   "truth": 26,
+   "raw": 14,
+   "raw_tp": 12,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 45.2
+  },
+  {
+   "id": "hold-16",
+   "truth": 21,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 9,
+   "kept_tp": 9,
+   "seconds": 42.1
+  },
+  {
+   "id": "hold-17",
+   "truth": 26,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 45.2
+  },
+  {
+   "id": "hold-18",
+   "truth": 21,
+   "raw": 13,
+   "raw_tp": 11,
+   "kept": 9,
+   "kept_tp": 9,
+   "seconds": 40.2
+  },
+  {
+   "id": "hold-19",
+   "truth": 21,
+   "raw": 13,
+   "raw_tp": 11,
+   "kept": 8,
+   "kept_tp": 8,
+   "seconds": 44.8
+  },
+  {
+   "id": "hold-20",
+   "truth": 21,
+   "raw": 17,
+   "raw_tp": 15,
+   "kept": 13,
+   "kept_tp": 13,
+   "seconds": 53.0
+  },
+  {
+   "id": "hold-21",
+   "truth": 21,
+   "raw": 17,
+   "raw_tp": 15,
+   "kept": 13,
+   "kept_tp": 13,
+   "seconds": 51.3
+  },
+  {
+   "id": "hold-22",
+   "truth": 21,
+   "raw": 13,
+   "raw_tp": 11,
+   "kept": 8,
+   "kept_tp": 8,
+   "seconds": 36.6
+  },
+  {
+   "id": "hold-23",
+   "truth": 21,
+   "raw": 13,
+   "raw_tp": 11,
+   "kept": 8,
+   "kept_tp": 8,
+   "seconds": 42.1
+  },
+  {
+   "id": "hold-24",
+   "truth": 16,
+   "raw": 15,
+   "raw_tp": 13,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 47.0
+  },
+  {
+   "id": "hold-25",
+   "truth": 21,
+   "raw": 13,
+   "raw_tp": 11,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 47.1
+  },
+  {
+   "id": "hold-26",
+   "truth": 16,
+   "raw": 10,
+   "raw_tp": 10,
+   "kept": 7,
+   "kept_tp": 7,
+   "seconds": 31.3
+  },
+  {
+   "id": "hold-27",
+   "truth": 16,
+   "raw": 12,
+   "raw_tp": 10,
+   "kept": 7,
+   "kept_tp": 7,
+   "seconds": 44.2
+  },
+  {
+   "id": "hold-28",
+   "truth": 26,
+   "raw": 14,
+   "raw_tp": 12,
+   "kept": 10,
+   "kept_tp": 10,
+   "seconds": 73.5
+  },
+  {
+   "id": "hold-29",
+   "truth": 26,
+   "raw": 18,
+   "raw_tp": 16,
+   "kept": 14,
+   "kept_tp": 14,
+   "seconds": 77.9
+  }
+ ]
+}

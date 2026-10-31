@@ -213,7 +213,12 @@ document.addEventListener("keydown", ev => { const n = ev.target.closest?.("[dat
 
 $("#ghost-rows").innerHTML = ghosts.map(e => `<tr><td>${esc(e.claim.a)} is ${RELNAME[e.claim.rel] || esc(e.claim.rel)} ${esc(e.claim.b)}</td><td class="r">${esc(D.reasons[e.reason] || e.reason)}</td><td>${esc(e.claim.quote)}</td></tr>`).join("")
   + ghostFacts.map(f => `<tr><td>${esc(f.person)}: ${esc(f.kind)} ${esc(f.value)}</td><td class="r">${esc(D.reasons[f.reason] || f.reason)}</td><td>${esc(f.quote)}</td></tr>`).join("");
-const narr = T.people.find(p => p.narrator); if (narr) showPerson(narr.id);
+// #edge=3 or #person=<id> opens that card, so a link can point at one ghost
+const h = decodeURIComponent(location.hash.slice(1));
+const narr = T.people.find(p => p.narrator);
+if (h.startsWith("edge=") && T.edges[+h.slice(5)]) showEdge(+h.slice(5));
+else if (h.startsWith("person=") && people[h.slice(7)]) showPerson(h.slice(7));
+else if (narr) showPerson(narr.id);
 </script>
 </body>
 </html>
